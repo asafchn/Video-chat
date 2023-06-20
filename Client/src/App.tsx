@@ -1,9 +1,10 @@
 import { SocketProvider } from "./socket/SocketContext";
+import MainPage from "./MainPage/MainPage";
 
 function App() {
   return (
     <SocketProvider>
-      <div>hello world</div>
+      <MainPage></MainPage>
     </SocketProvider>
   );
 }

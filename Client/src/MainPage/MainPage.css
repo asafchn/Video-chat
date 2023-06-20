@@ -1,0 +1,32 @@
+.main-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.camera-view {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons-container .button {
+  margin: 8px;
+}
+
+.placeholder {
+  width: 632px;
+  height: 460px;
+  display: flex;
+  border: solid 1px var(--background-over);
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  color: var(--text);
+}

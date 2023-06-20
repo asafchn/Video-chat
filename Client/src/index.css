@@ -1,0 +1,21 @@
+:root {
+  --blue-button: #7289da;
+  --white-text: #ffffff;
+  --grey-button: #5b5b5b;
+  --invert-text: #443b3a;
+  --color-cream: #fffda0;
+  --family-main: "Roboto", sans-serif;
+  --background-over: #36393e;
+  --background: #1e2124;
+  --text: #f3f3f3;
+}
+
+body {
+  background-color: var(--background);
+  margin: 0;
+  padding: 0;
+}
+
+.sb-main-padded {
+  background-color: #f5f5f5;
+}

@@ -1,0 +1,7 @@
+.clients-container {
+  background-color: var(--background-over);
+  width: 200px;
+  padding: 8px;
+  height: calc(100vh - 16px);
+  border-radius: 4px;
+}

@@ -1,0 +1,16 @@
+.client-item-container {
+  height: 50px;
+  background: var(--background);
+  width: 100%;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text);
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.client-item-container:hover {
+  background-color: var(--grey-button);
+}
