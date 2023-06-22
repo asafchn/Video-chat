@@ -5,10 +5,8 @@ import ClientItem from "../ClientItem/ClientItem";
 import { useCallHooks } from "../customHooks/callHooks";
 
 export default function ClientsList() {
-  const { users, userId } = useSelector(
-    (state: StoreState) => state.userStore,
-    shallowEqual
-  );
+  const users = useSelector((state: StoreState) => state.userStore.users);
+  const userId = useSelector((state: StoreState) => state.userStore.userId);
 
   function RenderClientsList() {
     const { callUser } = useCallHooks();
@@ -16,8 +14,8 @@ export default function ClientsList() {
     function handleCallUser(userId: string) {
       callUser(userId);
     }
-
-    return Object.values(users).map((user) => {
+    const clonedUsers = { ...users };
+    return Object.values(clonedUsers).map((user) => {
       if (user.name && user.id !== userId) {
         return (
           <ClientItem
@@ -26,13 +24,11 @@ export default function ClientsList() {
             onClick={(id: string) => handleCallUser(id)}
           ></ClientItem>
         );
+      } else {
+        return null;
       }
     });
   }
 
-  return (
-    <div className="clients-container">
-      <RenderClientsList></RenderClientsList>
-    </div>
-  );
+  return <div className="clients-container">{RenderClientsList()}</div>;
 }

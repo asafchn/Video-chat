@@ -6,8 +6,6 @@ export default function CameraView({ stream }: { stream: MediaStream }) {
 
   useEffect(() => {
     if (videoRef.current) {
-      console.log(stream);
-
       videoRef.current.srcObject = stream;
       videoRef.current.play();
     }

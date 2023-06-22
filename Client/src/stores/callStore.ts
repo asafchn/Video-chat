@@ -1,16 +1,18 @@
-import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Caller } from "../../../consts";
 
 interface InitialState {
   caller: Caller | null;
   receivingCall: boolean;
   callAccepted: boolean | null;
+  onCallWith: string;
 }
 
 const initialState: InitialState = {
   receivingCall: false,
   caller: null,
   callAccepted: null,
+  onCallWith: "",
 };
 
 export const callSlice = createSlice({
@@ -32,10 +34,17 @@ export const callSlice = createSlice({
     ) {
       state.callAccepted = action.payload.callAccepted;
     },
+    updateOnCallWith(state, action: PayloadAction<{ userId: string }>) {
+      state.onCallWith = action.payload.userId;
+    },
   },
 });
 
 export default callSlice.reducer;
 
-export const { updateReceivingCall, updateCaller, updateCallAccepted } =
-  callSlice.actions;
+export const {
+  updateReceivingCall,
+  updateCaller,
+  updateCallAccepted,
+  updateOnCallWith,
+} = callSlice.actions;

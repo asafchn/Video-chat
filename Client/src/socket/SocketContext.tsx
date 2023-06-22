@@ -1,16 +1,37 @@
-import { createContext, useEffect, useRef } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import { SocketConst, Users } from "../../../consts";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { updateUserId, updateClientsList } from "../stores/userStore";
 import { StoreState } from "../stores/store";
 import { useCallHooks } from "../customHooks/callHooks";
+import SimplePeer from "simple-peer";
+import { updateGuestStream } from "../stores/streamStore";
 
 const contextDefault: {
   webSocket: Socket<any, any> | null;
   userId: string;
+  myStream: MediaStream | null;
+  guestStream: MediaStream | null;
+  connection: SimplePeer.Instance | null;
+  setMyStream: (stream: MediaStream | null) => void;
+  setMyGuestStream: (stream: MediaStream | null) => void;
+  setMyPeer: (peer: SimplePeer.Instance | null) => void;
 } = {
   webSocket: null,
+  myStream: null,
+  guestStream: null,
+  connection: null,
+  setMyStream: (_: MediaStream | null) => {
+    return;
+  },
+  setMyGuestStream: (_: MediaStream | null) => {
+    return;
+  },
+  setMyPeer: (_: SimplePeer.Instance | null) => {
+    return;
+  },
+
   userId: "",
 };
 
@@ -19,10 +40,13 @@ export const SocketContext = createContext(contextDefault);
 export function SocketProvider(props: any) {
   const dispatch = useDispatch();
   const socket = useRef<Socket | null>(null);
-  const { callAcceptedListener, addCallingSocketListener } = useCallHooks();
+  const [myStream, setMyStream] = useState<MediaStream | null>(null);
+  const [myPeer, setMyPeer] = useState<SimplePeer.Instance | null>(null);
+  const [guestStream, setMyGuestStream] = useState<MediaStream | null>(null);
+  const { addCallingSocketListener } = useCallHooks();
 
-  const { userId } = useSelector(
-    (state: StoreState) => state.userStore,
+  const userId = useSelector(
+    (state: StoreState) => state.userStore.userId,
     shallowEqual
   );
 
@@ -49,7 +73,6 @@ export function SocketProvider(props: any) {
     addCallingSocketListener(socket.current);
 
     return () => {
-      console.log("unmount");
       if (socket.current) {
         socket.current.disconnect();
       }
@@ -59,6 +82,12 @@ export function SocketProvider(props: any) {
   const context = {
     webSocket: socket.current,
     userId: userId,
+    connection: myPeer,
+    guestStream: guestStream,
+    myStream: myStream,
+    setMyPeer,
+    setMyStream,
+    setMyGuestStream,
   };
   return (
     <SocketContext.Provider value={context}>

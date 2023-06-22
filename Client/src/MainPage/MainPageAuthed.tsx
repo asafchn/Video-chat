@@ -1,37 +1,40 @@
 import ClientsList from "../ClientsList/ClientsList";
 import CameraView from "../CameraView/CameraView";
 import "./MainPage.css";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import { StoreState } from "../stores/store";
-import { updateStream } from "../stores/streamStore";
-import { useEffect, useContext, MouseEvent } from "react";
+import { useContext } from "react";
 import CallControls from "./Controls/CallControls";
 import Modal from "../atoms/modal/Modal";
 import { SocketContext } from "../socket/SocketContext";
 import Button from "../atoms/button/Button";
 import { useCallHooks } from "../customHooks/callHooks";
 export default function MainPageAuthed() {
-  const { acceptCall } = useCallHooks();
-  const dispatch = useDispatch();
-  const { userName } = useSelector(
-    (state: StoreState) => state.userStore,
+  const { acceptCall, replaceStreamForPeer } = useCallHooks();
+  const userName = useSelector(
+    (state: StoreState) => state.userStore.userName,
     shallowEqual
   );
-  const { webSocket } = useContext(SocketContext);
-
-  const { stream, guestStream } = useSelector(
-    (state: StoreState) => state.streamStore
+  const socket = useContext(SocketContext);
+  const webSocket = socket.webSocket ?? null;
+  const myStream = socket.myStream;
+  const guestStream = socket.guestStream;
+  const peer = socket.connection;
+  const caller = useSelector((state: StoreState) => state.callStore.caller);
+  const receivingCall = useSelector(
+    (state: StoreState) => state.callStore.receivingCall
   );
-  const { caller, receivingCall, callAccepted } = useSelector(
-    (state: StoreState) => state.callStore
+  const callAccepted = useSelector(
+    (state: StoreState) => state.callStore.callAccepted
   );
 
   function shareScreen() {
     resetTracks();
     navigator.mediaDevices
       .getDisplayMedia({ video: true, audio: true })
-      .then((mediaStrea) => {
-        dispatch(updateStream({ stream: mediaStrea }));
+      .then((mediaStream) => {
+        socket.setMyStream(mediaStream);
+        replaceStreamForPeer(mediaStream);
       });
   }
 
@@ -39,19 +42,20 @@ export default function MainPageAuthed() {
     resetTracks();
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
-      .then((mediaStrea) => {
-        dispatch(updateStream({ stream: mediaStrea }));
+      .then((mediaStream) => {
+        socket.setMyStream(mediaStream);
+        replaceStreamForPeer(mediaStream);
       });
   }
 
   function stopStreaming() {
     resetTracks();
-    dispatch(updateStream({ stream: null }));
+    socket.setMyStream(null);
   }
 
   function resetTracks() {
-    if (stream) {
-      const allTracks = stream.getTracks();
+    if (myStream) {
+      const allTracks = myStream.getTracks();
       allTracks.forEach((track) => {
         track.stop();
       });
@@ -59,8 +63,8 @@ export default function MainPageAuthed() {
   }
 
   function RenderCamera() {
-    if (stream) {
-      return <CameraView stream={stream}></CameraView>;
+    if (myStream) {
+      return <CameraView stream={myStream}></CameraView>;
     } else {
       return <div className="placeholder">{userName}</div>;
     }
@@ -68,8 +72,6 @@ export default function MainPageAuthed() {
 
   function RenderGuestCamera() {
     if (guestStream) {
-      console.log(guestStream, "guest");
-
       return <CameraView stream={guestStream}></CameraView>;
     } else {
       return null;
@@ -79,7 +81,7 @@ export default function MainPageAuthed() {
   function RenderModalIfNeeded() {
     function handleAcceptAll() {
       if (webSocket) {
-        acceptCall(webSocket);
+        acceptCall();
       }
     }
 

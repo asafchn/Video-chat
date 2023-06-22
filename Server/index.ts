@@ -43,9 +43,12 @@ io.on(SocketConst.connection, (socket) => {
     }
   );
 
-  socket.on(SocketConst.callAccepted, (data: { to: string; signal: any }) => {
-    callAccepted(io, data);
-  });
+  socket.on(
+    SocketConst.callAccepted,
+    (data: { to: string; signal: any; userId: string }) => {
+      callAccepted(io, data);
+    }
+  );
 });
 
 server.listen(3001, () => {
@@ -76,8 +79,11 @@ function updateUserName({ id, name }: User) {
   }
 }
 
-function callAccepted(io: Server, data: { to: string; signal: any }) {
-  io.to(data.to).emit(SocketConst.callAccepted, data.signal);
+function callAccepted(
+  io: Server,
+  data: { to: string; signal: any; userId: string }
+) {
+  io.to(data.to).emit(SocketConst.callAccepted, data.signal, data.userId);
 }
 
 async function userCalled(

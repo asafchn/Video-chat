@@ -23,7 +23,10 @@ export const streamSlice = createSlice({
     updatePeer(state, action: PayloadAction<{ peer: SimplePeer.Instance }>) {
       state.peer = action.payload.peer;
     },
-    updateGuestStream(state, action: PayloadAction<{ stream: MediaStream }>) {
+    updateGuestStream(
+      state,
+      action: PayloadAction<{ stream: MediaStream | null }>
+    ) {
       state.guestStream = action.payload.stream;
     },
   },

@@ -6,6 +6,7 @@ export enum SocketConst {
   userCalled = "userCalled",
   me = "me",
   callAccepted = "callAccepted",
+  streamChanged = "streamChanged",
 }
 
 export interface User {

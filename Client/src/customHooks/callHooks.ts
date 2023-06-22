@@ -5,23 +5,28 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   updateCallAccepted,
   updateCaller,
+  updateOnCallWith,
   updateReceivingCall,
 } from "../stores/callStore";
 import Peer from "simple-peer";
 import { StoreState } from "../stores/store";
 import SimplePeer from "simple-peer";
-import { updatePeer, updateGuestStream } from "../stores/streamStore";
 import { Socket } from "socket.io-client";
 
 export function useCallHooks() {
   const dispatch = useDispatch();
-  const { stream } = useSelector((state: StoreState) => state.streamStore);
-  const peerRef = useRef<SimplePeer.Instance | null>(null);
-  const { userId, userName } = useSelector(
-    (state: StoreState) => state.userStore
+
+  const userName = useSelector((state: StoreState) => state.userStore.userName);
+  const userId = useSelector((state: StoreState) => state.userStore.userId);
+
+  const caller = useSelector((state: StoreState) => state.callStore.caller);
+  const onCallWith = useSelector(
+    (state: StoreState) => state.callStore.onCallWith
   );
-  const { caller } = useSelector((state: StoreState) => state.callStore);
-  const { webSocket } = useContext(SocketContext);
+  const socket = useContext(SocketContext);
+  const peer = socket.connection;
+
+  const connection = socket.connection;
 
   function addCallingSocketListener(socket: Socket) {
     socket.on(SocketConst.userCalled, (caller: Caller) => {
@@ -30,68 +35,90 @@ export function useCallHooks() {
     });
   }
 
-  function createPeer(): SimplePeer.Instance | undefined {
-    const peer = new Peer({
-      initiator: true,
-      trickle: true,
-      stream: stream ?? undefined,
-    });
-    peerRef.current = peer;
-    return peer;
-  }
-
   function callUser(id: string) {
-    createPeer();
-
-    if (peerRef.current && webSocket) {
-      peerRef.current.on("signal", (data) => {
-        const userData: UserCalledData = {
-          to: id,
-          from: userId,
-          signal: data,
-          name: userName,
-        };
-        webSocket.emit(SocketConst.userCalled, userData);
+    if (socket.myStream) {
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: socket.myStream,
       });
+      if (peer && socket.webSocket) {
+        peer.on("signal", (data) => {
+          if (socket.webSocket) {
+            const userData: UserCalledData = {
+              to: id,
+              from: userId,
+              signal: data,
+              name: userName,
+            };
+            socket.webSocket.emit(SocketConst.userCalled, userData);
+          }
+        });
 
-      peerRef.current.on("stream", (stream: MediaStream) => {
-        dispatch(updateGuestStream({ stream: stream }));
-      });
-      callAcceptedListener(webSocket, peerRef.current);
+        peer.on("stream", (stream: MediaStream) => {
+          socket.setMyGuestStream(stream);
+        });
+        callAcceptedListener(socket.webSocket, peer);
+        socket.setMyPeer(peer);
+      }
     }
   }
 
   function callAcceptedListener(socket: Socket, peer: SimplePeer.Instance) {
-    socket.on(SocketConst.callAccepted, (signal: any) => {
-      debugger;
-      if (peerRef.current) {
-        console.log(peerRef.current);
+    socket.on(SocketConst.callAccepted, (signal: any, userId: string) => {
+      console.log(signal);
 
-        peerRef.current.signal(signal);
-      }
+      peer.signal(signal);
+      dispatch(updateOnCallWith({ userId }));
       dispatch(updateCallAccepted({ callAccepted: true }));
     });
   }
-  function acceptCall(socket: Socket) {
-    dispatch(updateCallAccepted({ callAccepted: true }));
-    createPeer();
+  function replaceStreamForPeer(mediaStream: MediaStream) {
+    if (peer) {
+      peer.replaceTrack(
+        peer.streams[0].getVideoTracks()[0],
+        mediaStream.getVideoTracks()[0],
+        peer.streams[0]
+      );
+    }
+  }
 
-    if (peerRef.current && socket && caller) {
-      peerRef.current.on("signal", (data) => {
-        socket.emit(SocketConst.callAccepted, {
-          signal: data,
-          to: caller.callerId,
+  function acceptCall() {
+    if (socket.myStream) {
+      dispatch(updateCallAccepted({ callAccepted: true }));
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream: socket.myStream,
+      });
+
+      if (peer && socket.webSocket && caller) {
+        peer.on("signal", (data) => {
+          console.log(socket.webSocket);
+
+          if (socket.webSocket) {
+            console.log("call accepted");
+
+            socket.webSocket.emit(SocketConst.callAccepted, {
+              signal: data,
+              to: caller.callerId,
+              userId: userId,
+            });
+          }
         });
-      });
-      peerRef.current.on("stream", (stream) => {
-        dispatch(updateGuestStream({ stream }));
-      });
-      peerRef.current.signal(caller.callerSignal);
+        peer.on("stream", (stream) => {
+          socket.setMyGuestStream(stream);
+        });
+        peer.signal(caller.callerSignal);
+        socket.setMyPeer(peer);
+        dispatch(updateOnCallWith({ userId }));
+      }
     }
   }
   return {
     acceptCall,
     addCallingSocketListener,
+    replaceStreamForPeer,
     callAcceptedListener,
     callUser,
   };
