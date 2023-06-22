@@ -1,0 +1,17 @@
+.modal-container {
+  background: var(--background-over);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  margin: auto;
+  z-index: 3;
+  bottom: 0;
+  height: 400px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: space-around;
+  left: 0;
+  right: 0;
+}

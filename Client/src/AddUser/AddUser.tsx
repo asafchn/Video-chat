@@ -5,15 +5,16 @@ import { SocketConst } from "../../../consts";
 import { useDispatch } from "react-redux";
 import { updateUserName } from "../stores/userStore";
 import "../AddUser/addUser.css";
-import Button from "../atoms/Input/button/Button";
+import Button from "../atoms/button/Button";
+import Modal from "../atoms/modal/Modal";
 
 export default function AddUser() {
   const dispatch = useDispatch();
-  const [inputValue, setInputValue] = useState("");
   const socket = useContext(SocketContext);
-
+  const inputRef = useRef<HTMLInputElement>(null);
   function createUser() {
     if (socket.webSocket) {
+      const inputValue = inputRef.current?.value ?? "";
       dispatch(updateUserName({ userName: inputValue }));
       socket.webSocket.emit(SocketConst.updateUser, {
         id: socket.userId,
@@ -22,20 +23,16 @@ export default function AddUser() {
     }
   }
   return (
-    <div className="container">
+    <Modal>
       <div>
-        <Input
-          onChange={(str) => setInputValue(str)}
-          withLabel="Please fill in your Name"
-          noBorder={false}
-        ></Input>
+        <input ref={inputRef}></input>
       </div>
       <Button
         text="All is set"
         secondary={false}
         onClick={createUser}
-        disabled={!inputValue}
+        disabled={false}
       ></Button>
-    </div>
+    </Modal>
   );
 }

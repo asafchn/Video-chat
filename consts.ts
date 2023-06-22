@@ -22,8 +22,8 @@ export interface Caller {
 }
 
 export interface UserCalledData {
-  userToCall: string;
-  signalData: any;
+  to: string;
+  signal: any;
   from: string;
   name: string;
 }

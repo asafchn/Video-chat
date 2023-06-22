@@ -53,7 +53,7 @@ export const Input = ({
         id={computedId()}
         placeholder="Search..."
         onChange={handleChange}
-      ></input>{" "}
+      ></input>
     </div>
   );
 };

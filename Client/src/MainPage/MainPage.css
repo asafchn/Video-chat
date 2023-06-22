@@ -11,15 +11,6 @@
   width: 100%;
 }
 
-.buttons-container {
-  display: flex;
-  justify-content: center;
-}
-
-.buttons-container .button {
-  margin: 8px;
-}
-
 .placeholder {
   width: 632px;
   height: 460px;

@@ -1,5 +1,5 @@
 import "./button.css";
-
+import { MouseEvent } from "react";
 export default function Button({
   onClick,
   secondary,
@@ -11,13 +11,17 @@ export default function Button({
   disabled: boolean;
   text: string;
 }) {
+  function handleClick(event: MouseEvent) {
+    event.preventDefault();
+    onClick();
+  }
   return (
     <button
       disabled={disabled}
       className={`button ${secondary ? "secondary" : ""} ${
         disabled ? "disabled" : ""
       }`}
-      onClick={onClick}
+      onClick={(e) => handleClick(e)}
     >
       {text}
     </button>

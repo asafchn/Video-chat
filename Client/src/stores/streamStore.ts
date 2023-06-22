@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import SimplePeer from "simple-peer";
+
 interface InitialState {
   stream: MediaStream | null;
   peer: SimplePeer.Instance | null;

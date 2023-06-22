@@ -3,10 +3,11 @@ import "./CameraView.css";
 
 export default function CameraView({ stream }: { stream: MediaStream }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  console.log(stream);
 
   useEffect(() => {
     if (videoRef.current) {
+      console.log(stream);
+
       videoRef.current.srcObject = stream;
       videoRef.current.play();
     }
@@ -15,6 +16,7 @@ export default function CameraView({ stream }: { stream: MediaStream }) {
   return (
     <div className="camera-container">
       <video className="video" ref={videoRef}></video>
+      <button onClick={() => videoRef.current?.play()}>play</button>
     </div>
   );
 }

@@ -1,15 +1,30 @@
 import ClientsList from "../ClientsList/ClientsList";
 import CameraView from "../CameraView/CameraView";
-import Button from "../atoms/Input/button/Button";
 import "./MainPage.css";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StoreState } from "../stores/store";
 import { updateStream } from "../stores/streamStore";
-
+import { useEffect, useContext, MouseEvent } from "react";
+import CallControls from "./Controls/CallControls";
+import Modal from "../atoms/modal/Modal";
+import { SocketContext } from "../socket/SocketContext";
+import Button from "../atoms/button/Button";
+import { useCallHooks } from "../customHooks/callHooks";
 export default function MainPageAuthed() {
+  const { acceptCall } = useCallHooks();
   const dispatch = useDispatch();
-  const { userName } = useSelector((state: StoreState) => state.userStore);
-  const { stream } = useSelector((state: StoreState) => state.streamStore);
+  const { userName } = useSelector(
+    (state: StoreState) => state.userStore,
+    shallowEqual
+  );
+  const { webSocket } = useContext(SocketContext);
+
+  const { stream, guestStream } = useSelector(
+    (state: StoreState) => state.streamStore
+  );
+  const { caller, receivingCall, callAccepted } = useSelector(
+    (state: StoreState) => state.callStore
+  );
 
   function shareScreen() {
     resetTracks();
@@ -51,33 +66,60 @@ export default function MainPageAuthed() {
     }
   }
 
-  return (
-    <div className="main-container">
-      <div className="camera-view">
-        <RenderCamera></RenderCamera>
-        <div className="buttons-container">
-          <Button
-            onClick={shareScreen}
-            secondary={false}
-            disabled={false}
-            text="Share screen"
-          ></Button>
-          <Button
-            onClick={showCamera}
-            secondary={false}
-            disabled={false}
-            text="Open Camera"
-          ></Button>
-          <Button
-            onClick={stopStreaming}
-            secondary={false}
-            disabled={false}
-            text="Stop Sharing"
-          ></Button>
-        </div>
-      </div>
+  function RenderGuestCamera() {
+    if (guestStream) {
+      console.log(guestStream, "guest");
 
-      <ClientsList></ClientsList>
-    </div>
+      return <CameraView stream={guestStream}></CameraView>;
+    } else {
+      return null;
+    }
+  }
+
+  function RenderModalIfNeeded() {
+    function handleAcceptAll() {
+      if (webSocket) {
+        acceptCall(webSocket);
+      }
+    }
+
+    if (caller && receivingCall && !callAccepted) {
+      return (
+        <Modal>
+          <div>{caller.callerName} is calling</div>
+          <div>
+            <Button
+              disabled={false}
+              text={"Answer"}
+              secondary={false}
+              onClick={handleAcceptAll}
+            ></Button>
+          </div>
+        </Modal>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  return (
+    <>
+      <RenderModalIfNeeded></RenderModalIfNeeded>
+      <div
+        className={`main-container ${receivingCall ? "receiving-call" : ""}`}
+      >
+        <div className="camera-view">
+          <RenderCamera></RenderCamera>
+          <RenderGuestCamera></RenderGuestCamera>
+          <CallControls
+            shareScreen={shareScreen}
+            showCamera={showCamera}
+            stopStreaming={stopStreaming}
+          ></CallControls>
+        </div>
+
+        <ClientsList></ClientsList>
+      </div>
+    </>
   );
 }
