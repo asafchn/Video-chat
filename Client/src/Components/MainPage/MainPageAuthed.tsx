@@ -1,9 +1,10 @@
 import ClientsList from "../ClientsList/ClientsList";
 import "./MainPage.css";
 import { useSelector } from "react-redux";
-import { StoreState } from "../stores/store";
+import { StoreState } from "../../stores/store";
 import VideoCall from "../VideoCall/VideoCall/VideoCall";
 import CallAcceptModal from "./CallAcceptModal/CallAcceptModal";
+
 export default function MainPageAuthed() {
   const caller = useSelector((state: StoreState) => state.callStore.caller);
   const userName = useSelector((state: StoreState) => state.userStore.userName);

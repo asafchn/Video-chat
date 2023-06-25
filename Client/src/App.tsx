@@ -1,5 +1,5 @@
 import { SocketProvider } from "./socket/SocketContext";
-import MainPage from "./MainPage/MainPage";
+import MainPage from "./Components/MainPage/MainPage.tsx";
 import { Provider } from "react-redux";
 import { store } from "./stores/store.ts";
 

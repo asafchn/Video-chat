@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { SocketContext } from "../../socket/SocketContext";
-import { useCallHooks } from "../../customHooks/callHooks";
 import { useSelector } from "react-redux";
-import { StoreState } from "../../stores/store";
+import { SocketContext } from "../../../socket/SocketContext";
+import { StoreState } from "../../../stores/store";
+import { useCallHooks } from "../../../customHooks/callHooks";
 import Modal from "../../atoms/modal/Modal";
 import Button from "../../atoms/button/Button";
 

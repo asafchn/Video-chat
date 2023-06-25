@@ -1,13 +1,13 @@
 import { useRef, useContext } from "react";
 import { useSelector } from "react-redux";
-import { SocketContext } from "../socket/SocketContext";
-import { SocketConst } from "../../../consts";
+import { SocketConst } from "../../../../consts";
+import { SocketContext } from "../../socket/SocketContext";
 import { useDispatch } from "react-redux";
-import { updateUserName } from "../stores/userStore";
+import { updateUserName } from "../../stores/userStore";
 import "../AddUser/addUser.css";
 import Button from "../atoms/button/Button";
 import Modal from "../atoms/modal/Modal";
-import { StoreState } from "../stores/store";
+import { StoreState } from "../../stores/store";
 import Input from "../atoms/Input/Input";
 
 export default function AddUser() {

@@ -2,9 +2,9 @@ import { useContext } from "react";
 import Cameras from "../Cameras/Cameras";
 import CallControls from "../Controls/CallControls";
 import "./video-call.css";
-import { SocketContext } from "../../socket/SocketContext";
-import { useCallHooks } from "../../customHooks/callHooks";
-import { Caller, Users } from "../../../../consts";
+import { SocketContext } from "../../../socket/SocketContext";
+import { useCallHooks } from "../../../customHooks/callHooks";
+import { Caller, Users } from "../../../../../consts";
 
 export default function VideoCall({
   caller,

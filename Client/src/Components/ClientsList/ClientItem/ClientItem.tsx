@@ -1,4 +1,4 @@
-import { User } from "../../../consts";
+import { User } from "../../../../../consts";
 import "../ClientItem/clientItem.css";
 export default function ClientItem({
   user,

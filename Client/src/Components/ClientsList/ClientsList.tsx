@@ -1,9 +1,9 @@
 import { shallowEqual, useSelector } from "react-redux";
-import { StoreState } from "../stores/store";
+import { StoreState } from "../../stores/store";
 import "../ClientsList/clientsList.css";
-import ClientItem from "../ClientItem/ClientItem";
-import { useCallHooks } from "../customHooks/callHooks";
-import { User } from "../../../consts";
+import ClientItem from "./ClientItem/ClientItem";
+import { useCallHooks } from "../../customHooks/callHooks";
+import { User } from "../../../../consts";
 
 export default function ClientsList() {
   const users = useSelector((state: StoreState) => state.userStore.users);

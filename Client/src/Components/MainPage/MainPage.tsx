@@ -1,5 +1,5 @@
 import { shallowEqual, useSelector } from "react-redux";
-import { StoreState } from "../stores/store";
+import { StoreState } from "../../stores/store";
 import AddUser from "../AddUser/AddUser";
 import MainPageAuthed from "./MainPageAuthed";
 

@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 import { SocketContext } from "../socket/SocketContext";
 import { type Caller, type UserCalledData, SocketConst } from "../../../consts";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,15 +18,9 @@ export function useCallHooks() {
 
   const userName = useSelector((state: StoreState) => state.userStore.userName);
   const userId = useSelector((state: StoreState) => state.userStore.userId);
-
   const caller = useSelector((state: StoreState) => state.callStore.caller);
-  const onCallWith = useSelector(
-    (state: StoreState) => state.callStore.onCallWith
-  );
   const socket = useContext(SocketContext);
   const peer = socket.connection;
-
-  const connection = socket.connection;
 
   function addCallingSocketListener(socket: Socket) {
     socket.on(SocketConst.userCalled, (caller: Caller) => {
@@ -94,11 +88,7 @@ export function useCallHooks() {
 
       if (peer && socket.webSocket && caller) {
         peer.on("signal", (data) => {
-          console.log(socket.webSocket);
-
           if (socket.webSocket) {
-            console.log("call accepted");
-
             socket.webSocket.emit(SocketConst.callAccepted, {
               signal: data,
               to: caller.callerId,

@@ -1,6 +1,6 @@
 import Button from "../../atoms/button/Button";
 import "./callControls.css";
-import type { CallControlFunctions } from "../../../../consts";
+import type { CallControlFunctions } from "../../../../../consts";
 
 export default function CallControls({
   shareScreen,
