@@ -1,16 +1,12 @@
 import Button from "../../atoms/button/Button";
 import "./callControls.css";
-type CallControlFunc = () => void;
+import type { CallControlFunctions } from "../../../../consts";
 
 export default function CallControls({
   shareScreen,
   showCamera,
   stopStreaming,
-}: {
-  shareScreen: CallControlFunc;
-  showCamera: CallControlFunc;
-  stopStreaming: CallControlFunc;
-}) {
+}: CallControlFunctions) {
   return (
     <div className="buttons-container">
       <Button

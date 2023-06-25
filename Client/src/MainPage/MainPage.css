@@ -3,14 +3,6 @@
   justify-content: space-between;
 }
 
-.camera-view {
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
 .placeholder {
   width: 632px;
   height: 460px;

@@ -28,3 +28,11 @@ export interface UserCalledData {
   from: string;
   name: string;
 }
+
+export type CallControlFunc = () => void;
+
+export interface CallControlFunctions {
+  shareScreen: CallControlFunc;
+  showCamera: CallControlFunc;
+  stopStreaming: CallControlFunc;
+}
