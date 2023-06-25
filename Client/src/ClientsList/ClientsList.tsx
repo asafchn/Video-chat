@@ -3,20 +3,32 @@ import { StoreState } from "../stores/store";
 import "../ClientsList/clientsList.css";
 import ClientItem from "../ClientItem/ClientItem";
 import { useCallHooks } from "../customHooks/callHooks";
+import { User } from "../../../consts";
 
 export default function ClientsList() {
   const users = useSelector((state: StoreState) => state.userStore.users);
-  const userId = useSelector((state: StoreState) => state.userStore.userId);
+  const userId = useSelector(
+    (state: StoreState) => state.userStore.userId,
+    shallowEqual
+  );
 
   function RenderClientsList() {
     const { callUser } = useCallHooks();
 
+    function shouldRenderClientItem(user: User) {
+      if (!user.name) {
+        return false;
+      }
+      if (user.id) {
+        return user.id !== userId;
+      }
+      return false;
+    }
     function handleCallUser(userId: string) {
       callUser(userId);
     }
-    const clonedUsers = { ...users };
-    return Object.values(clonedUsers).map((user) => {
-      if (user.name && user.id !== userId) {
+    return Object.values(users).map((user) => {
+      if (shouldRenderClientItem(user)) {
         return (
           <ClientItem
             key={user.id}

@@ -1,5 +1,5 @@
-import { useState, useRef, useContext } from "react";
-import { Input } from "../atoms/Input/Input";
+import { useRef, useContext } from "react";
+import { useSelector } from "react-redux";
 import { SocketContext } from "../socket/SocketContext";
 import { SocketConst } from "../../../consts";
 import { useDispatch } from "react-redux";
@@ -7,26 +7,30 @@ import { updateUserName } from "../stores/userStore";
 import "../AddUser/addUser.css";
 import Button from "../atoms/button/Button";
 import Modal from "../atoms/modal/Modal";
+import { StoreState } from "../stores/store";
+import Input from "../atoms/Input/Input";
 
 export default function AddUser() {
   const dispatch = useDispatch();
   const socket = useContext(SocketContext);
   const inputRef = useRef<HTMLInputElement>(null);
+  const userId = useSelector((state: StoreState) => {
+    state.userStore.userId;
+  });
+
   function createUser() {
     if (socket.webSocket) {
       const inputValue = inputRef.current?.value ?? "";
       dispatch(updateUserName({ userName: inputValue }));
       socket.webSocket.emit(SocketConst.updateUser, {
-        id: socket.userId,
+        id: userId,
         name: inputValue,
       });
     }
   }
   return (
     <Modal>
-      <div>
-        <input ref={inputRef}></input>
-      </div>
+      <Input ref={inputRef}></Input>
       <Button
         text="All is set"
         secondary={false}

@@ -1,29 +1,14 @@
 .input {
-    width: 300px;
-    height: 19px;
-    padding: 8px;
-    font-size: 19px;
-    border-radius: 4px;
-    color: var(--invert-text);
-    border: 1px solid var(--invert-text);
-}
-
-.no-border {
-    outline: none;
-    border: none;
-}
-
-.input.no-border:focus {
-    outline: none;
+  width: 300px;
+  height: 19px;
+  padding: 8px;
+  font-size: 19px;
+  border-radius: 4px;
+  color: var(--invert-text);
+  border: 1px solid var(--invert-text);
 }
 
 .input-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.label {
-    font-family: var(---family-main);
-    color: var(--text);
-    padding-bottom: 4px;
+  display: flex;
+  flex-direction: column;
 }

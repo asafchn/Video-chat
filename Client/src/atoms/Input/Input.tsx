@@ -1,59 +1,18 @@
-import { useEffect, useState } from "react";
-import { debounce } from "lodash";
-import React from "react";
+import { ForwardedRef, forwardRef } from "react";
 import "./input.css";
-export const Input = ({
-  onChange,
-  withLabel,
-  noBorder,
-}: {
-  onChange: (str: string) => void;
-  withLabel: string;
-  noBorder: boolean;
-}) => {
-  const [query, setQuery] = useState("");
-  function computedId() {
-    if (withLabel) {
-      return `${withLabel}-input`;
-    } else {
-      return "";
-    }
-  }
-  const debouncedSearch = debounce((text) => {
-    setQuery(text);
-  }, 1500);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    debouncedSearch(e.target.value);
-  }
-
-  function renderLabelIfNeeded() {
-    if (withLabel) {
-      return (
-        <label className="label" htmlFor={computedId()}>
-          {withLabel}
-        </label>
-      );
-    } else {
-      return null;
-    }
-  }
-
-  useEffect(() => {
-    if (query) {
-      onChange(query);
-    }
-  }, [query]);
-
+const Input = forwardRef(function renderInput(
+  _,
+  inputRef: ForwardedRef<HTMLInputElement | null>
+) {
   return (
     <div className="input-container">
-      {renderLabelIfNeeded()}
       <input
-        className={`input ${noBorder ? "no-border" : ""}`}
-        id={computedId()}
-        placeholder="Search..."
-        onChange={handleChange}
+        className="input"
+        ref={inputRef}
+        placeholder="Add Your name"
       ></input>
     </div>
   );
-};
+});
+export default Input;
