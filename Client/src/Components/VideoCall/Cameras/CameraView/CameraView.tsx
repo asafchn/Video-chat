@@ -11,10 +11,5 @@ export default function CameraView({ stream }: { stream: MediaStream }) {
     }
   }, [videoRef]);
 
-  return (
-    <div className="camera-container">
-      <video className="video" ref={videoRef}></video>
-      <button onClick={() => videoRef.current?.play()}>play</button>
-    </div>
-  );
+  return <video className="video" ref={videoRef}></video>;
 }

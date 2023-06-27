@@ -24,9 +24,11 @@ export default function ClientsList() {
       }
       return false;
     }
+
     function handleCallUser(userId: string) {
       callUser(userId);
     }
+
     return Object.values(users).map((user) => {
       if (shouldRenderClientItem(user)) {
         return (

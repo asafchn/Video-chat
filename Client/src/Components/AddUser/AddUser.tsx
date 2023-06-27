@@ -15,7 +15,7 @@ export default function AddUser() {
   const socket = useContext(SocketContext);
   const inputRef = useRef<HTMLInputElement>(null);
   const userId = useSelector((state: StoreState) => {
-    state.userStore.userId;
+    return state.userStore.userId;
   });
 
   function createUser() {

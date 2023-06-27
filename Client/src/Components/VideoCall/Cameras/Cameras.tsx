@@ -1,4 +1,5 @@
 import CameraView from "./CameraView/CameraView";
+import "./Cameras.css";
 
 export default function Cameras({
   user,
@@ -26,9 +27,9 @@ export default function Cameras({
   }
 
   return (
-    <>
+    <div className="cameras-container">
       <RenderCamera></RenderCamera>
       <RenderGuestCamera></RenderGuestCamera>
-    </>
+    </div>
   );
 }

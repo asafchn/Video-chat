@@ -1,10 +1,5 @@
-.camera-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .video {
-  width: 632px;
-  height: 460px;
+  border-radius: 16px;
+  width: calc(50% - 32px);
+  margin: 16px;
 }
