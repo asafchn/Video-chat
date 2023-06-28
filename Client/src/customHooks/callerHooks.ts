@@ -33,11 +33,15 @@ export function useCallerHooks() {
     peer.on("signal", (data) => {
       if (socket.webSocket) {
         const userData = getUserAnsweredData(userCalledId, data);
-        socket.webSocket.emit(SocketConst.userCalled, userData);
+        emitUserCalled(socket.webSocket, userData);
       } else {
         peer.destroy();
       }
     });
+  }
+
+  function emitUserCalled(webSocket: Socket, userData: UserCalledData) {
+    webSocket.emit(SocketConst.userCalled, userData);
   }
 
   function callAcceptedListener(socket: Socket, peer: SimplePeer.Instance) {
