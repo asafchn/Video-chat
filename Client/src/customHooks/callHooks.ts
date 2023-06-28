@@ -1,70 +1,39 @@
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 import { SocketContext } from "../socket/SocketContext";
-import { type Caller, type UserCalledData, SocketConst } from "../../../consts";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateCallAccepted,
-  updateCaller,
-  updateOnCallWith,
-  updateReceivingCall,
-} from "../stores/callStore";
 import Peer from "simple-peer";
-import { StoreState } from "../stores/store";
-import SimplePeer from "simple-peer";
-import { Socket } from "socket.io-client";
+import { useCallerHooks } from "./callerHooks";
+import { useCalleeHooks } from "./calleeHooks";
 
 export function useCallHooks() {
-  const dispatch = useDispatch();
-
-  const userName = useSelector((state: StoreState) => state.userStore.userName);
-  const userId = useSelector((state: StoreState) => state.userStore.userId);
-
-  const caller = useSelector((state: StoreState) => state.callStore.caller);
-
+  const callerHooks = useCallerHooks();
+  const calleeHooks = useCalleeHooks();
   const socket = useContext(SocketContext);
   const peer = socket.connection;
 
-  function addCallingSocketListener(socket: Socket) {
-    socket.on(SocketConst.userCalled, (caller: Caller) => {
-      dispatch(updateReceivingCall({ receivingCall: true }));
-      dispatch(updateCaller({ caller: caller }));
+  function createPeer({
+    initiator,
+    stream,
+  }: {
+    initiator: boolean;
+    stream: MediaStream | null;
+  }) {
+    return new Peer({
+      initiator,
+      trickle: false,
+      stream: stream ?? undefined,
     });
   }
 
   function callUser(id: string) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: socket.myStream ?? undefined,
-    });
-    if (peer && socket.webSocket) {
-      peer.on("signal", (data) => {
-        if (socket.webSocket) {
-          const userData: UserCalledData = {
-            to: id,
-            from: userId,
-            signal: data,
-            name: userName,
-          };
-          socket.webSocket.emit(SocketConst.userCalled, userData);
-        }
-      });
-
-      peer.on("stream", (stream: MediaStream) => {
-        socket.setMyGuestStream(stream);
-      });
-      callAcceptedListener(socket.webSocket, peer);
+    if (socket.webSocket) {
+      const peer = createPeer({ initiator: true, stream: socket.myStream });
+      callerHooks.onCallerSignal(peer, id);
+      callerHooks.onCallerStream(peer);
+      callerHooks.callAcceptedListener(socket.webSocket, peer);
       socket.setMyPeer(peer);
     }
   }
 
-  function callAcceptedListener(socket: Socket, peer: SimplePeer.Instance) {
-    socket.on(SocketConst.callAccepted, (signal: any, userId: string) => {
-      peer.signal(signal);
-      dispatch(updateOnCallWith({ userId }));
-      dispatch(updateCallAccepted({ callAccepted: true }));
-    });
-  }
   function replaceStreamForPeer(mediaStream: MediaStream) {
     if (peer) {
       if (peer.streams.length) {
@@ -80,40 +49,17 @@ export function useCallHooks() {
   }
 
   function acceptCall() {
-    dispatch(updateCallAccepted({ callAccepted: true }));
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: socket.myStream ?? undefined,
-    });
-
-    if (peer && socket.webSocket && caller) {
-      peer.on("signal", (data) => {
-        console.log(socket.webSocket);
-
-        if (socket.webSocket) {
-          console.log("call accepted");
-
-          socket.webSocket.emit(SocketConst.callAccepted, {
-            signal: data,
-            to: caller.callerId,
-            userId: userId,
-          });
-        }
-      });
-      peer.on("stream", (stream) => {
-        socket.setMyGuestStream(stream);
-      });
-      peer.signal(caller.callerSignal);
-      socket.setMyPeer(peer);
-      dispatch(updateOnCallWith({ userId: caller.callerId }));
-    }
+    calleeHooks.onCallAccepted();
+    const peer = createPeer({ initiator: false, stream: socket.myStream });
+    calleeHooks.onCalleeSignal(peer);
+    calleeHooks.onCalleeStream(peer);
+    calleeHooks.updateCalleeStates(peer);
   }
+
   return {
     acceptCall,
-    addCallingSocketListener,
+    userIsCallingListener: calleeHooks.userIsCallingListener,
     replaceStreamForPeer,
-    callAcceptedListener,
     callUser,
   };
 }

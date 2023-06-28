@@ -38,7 +38,7 @@ export function SocketProvider(props: any) {
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [myPeer, setMyPeer] = useState<SimplePeer.Instance | null>(null);
   const [guestStream, setMyGuestStream] = useState<MediaStream | null>(null);
-  const { addCallingSocketListener } = useCallHooks();
+  const { userIsCallingListener } = useCallHooks();
 
   function currentUserListener() {
     if (socket.current) {
@@ -60,8 +60,7 @@ export function SocketProvider(props: any) {
     socket.current = io("http://localhost:3001");
     currentUserListener();
     clientsListListener();
-    addCallingSocketListener(socket.current);
-
+    userIsCallingListener(socket.current);
     return () => {
       if (socket.current) {
         socket.current.disconnect();
