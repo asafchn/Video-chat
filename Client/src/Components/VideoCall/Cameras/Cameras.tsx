@@ -4,9 +4,11 @@ import "./Cameras.css";
 export default function Cameras({
   user,
   guest,
+  onCallWith,
 }: {
   user: { stream: MediaStream | null; name: string | null };
   guest: { stream: MediaStream | null; name: string | null };
+  onCallWith: string | null;
 }) {
   function RenderCamera() {
     if (user.stream) {
@@ -18,12 +20,15 @@ export default function Cameras({
   }
 
   function RenderGuestCamera() {
-    if (guest.stream) {
-      return <CameraView stream={guest.stream}></CameraView>;
-    } else if (guest.name) {
-      return <div className="placeholder">{guest.name}</div>;
+    if (onCallWith) {
+      if (guest.stream) {
+        return <CameraView stream={guest.stream}></CameraView>;
+      } else {
+        return <div>{guest?.name ?? onCallWith}</div>;
+      }
+    } else {
+      return null;
     }
-    return null;
   }
 
   return (

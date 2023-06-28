@@ -5,6 +5,8 @@ import "./video-call.css";
 import { SocketContext } from "../../../socket/SocketContext";
 import { useCallHooks } from "../../../customHooks/callHooks";
 import { Caller, Users } from "../../../../../consts";
+import { StoreState } from "../../../stores/store";
+import { useSelector } from "react-redux";
 
 export default function VideoCall({
   caller,
@@ -17,7 +19,9 @@ export default function VideoCall({
 }) {
   const socket = useContext(SocketContext);
   const { replaceStreamForPeer } = useCallHooks();
-
+  const onCallWith = useSelector(
+    (state: StoreState) => state.callStore.onCallWith
+  );
   const myStream = socket.myStream;
   const guestStream = socket.guestStream;
   const user = { stream: myStream, name: userName };
@@ -66,7 +70,7 @@ export default function VideoCall({
 
   return (
     <div className="video-call-container">
-      <Cameras user={user} guest={guest}></Cameras>
+      <Cameras user={user} guest={guest} onCallWith={onCallWith}></Cameras>
       <CallControls
         shareScreen={shareScreen}
         showCamera={showCamera}
