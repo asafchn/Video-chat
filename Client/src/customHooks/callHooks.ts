@@ -25,7 +25,8 @@ export function useCallHooks() {
     });
   }
 
-  function callUser(id: string, stream: MediaStream) {
+  async function callUser(id: string) {
+    const stream = await getMediaOnInitialConnection();
     if (socket.webSocket) {
       const peer = createPeer({ initiator: true, stream: stream });
       callerHooks.onCallerSignal(peer, id);
@@ -70,7 +71,8 @@ export function useCallHooks() {
     });
   }
 
-  function acceptCall(stream: MediaStream) {
+  async function acceptCall() {
+    const stream = await getMediaOnInitialConnection();
     calleeHooks.onCallAccepted();
     const peer = createPeer({ initiator: false, stream: stream });
     calleeHooks.onCalleeSignal(peer);
