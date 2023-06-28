@@ -7,7 +7,7 @@ import Modal from "../../atoms/modal/Modal";
 import Button from "../../atoms/button/Button";
 
 export default function CallAcceptModal() {
-  const { acceptCall } = useCallHooks();
+  const { acceptCall, getMediaOnInitialConnection } = useCallHooks();
   const socket = useContext(SocketContext);
   const caller = useSelector((state: StoreState) => state.callStore.caller);
   const receivingCall = useSelector(
@@ -19,9 +19,10 @@ export default function CallAcceptModal() {
 
   const webSocket = socket.webSocket ?? null;
 
-  function handleAcceptCall() {
+  async function handleAcceptCall() {
     if (webSocket) {
-      acceptCall();
+      const stream = await getMediaOnInitialConnection();
+      acceptCall(stream);
     }
   }
 

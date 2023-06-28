@@ -13,7 +13,7 @@ export default function ClientsList() {
   );
 
   function RenderClientsList() {
-    const { callUser } = useCallHooks();
+    const { callUser, getMediaOnInitialConnection } = useCallHooks();
 
     function shouldRenderClientItem(user: User) {
       if (!user.name) {
@@ -25,8 +25,9 @@ export default function ClientsList() {
       return false;
     }
 
-    function handleCallUser(userId: string) {
-      callUser(userId);
+    async function handleCallUser(userId: string) {
+      const stream = await getMediaOnInitialConnection();
+      callUser(userId, stream);
     }
 
     return Object.values(users).map((user) => {

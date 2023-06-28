@@ -71,11 +71,13 @@ export default function VideoCall({
   return (
     <div className="video-call-container">
       <Cameras user={user} guest={guest} onCallWith={onCallWith}></Cameras>
-      <CallControls
-        shareScreen={shareScreen}
-        showCamera={showCamera}
-        stopStreaming={stopStreaming}
-      ></CallControls>
+      {onCallWith ? (
+        <CallControls
+          shareScreen={shareScreen}
+          showCamera={showCamera}
+          stopStreaming={stopStreaming}
+        ></CallControls>
+      ) : null}
     </div>
   );
 }
