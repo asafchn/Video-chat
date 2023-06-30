@@ -42,7 +42,6 @@ export default function CallAcceptModal() {
           <Button
             disabled={false}
             text={"Answer"}
-            secondary={false}
             onClick={handleAcceptCall}
           ></Button>
         </div>

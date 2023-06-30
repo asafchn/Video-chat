@@ -1,8 +1,14 @@
-.buttons-container {
+.actions {
   display: flex;
   justify-content: center;
 }
 
-.buttons-container .button {
+.actions .button {
   margin: 8px;
+}
+
+.call-controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

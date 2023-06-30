@@ -37,6 +37,12 @@ export const callSlice = createSlice({
     updateOnCallWith(state, action: PayloadAction<{ userId: string }>) {
       state.onCallWith = action.payload.userId;
     },
+    resetState(state) {
+      state.callAccepted = null;
+      state.caller = null;
+      state.onCallWith = "";
+      state.receivingCall = false;
+    },
   },
 });
 
@@ -46,5 +52,6 @@ export const {
   updateReceivingCall,
   updateCaller,
   updateCallAccepted,
+  resetState,
   updateOnCallWith,
 } = callSlice.actions;

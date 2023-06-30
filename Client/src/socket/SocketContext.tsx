@@ -1,10 +1,12 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import { SocketConst, Users } from "../../../consts";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { updateUserId, updateClientsList } from "../stores/userStore";
+import { resetState as resetCallStore } from "../stores/callStore";
 import { useCallHooks } from "../customHooks/callHooks";
 import SimplePeer from "simple-peer";
+import { StoreState } from "../stores/store";
 
 const contextDefault: {
   webSocket: Socket<any, any> | null;
@@ -14,6 +16,7 @@ const contextDefault: {
   setMyStream: (stream: MediaStream | null) => void;
   setMyGuestStream: (stream: MediaStream | null) => void;
   setMyPeer: (peer: SimplePeer.Instance | null) => void;
+  callDisconnected: () => void;
 } = {
   webSocket: null,
   myStream: null,
@@ -23,6 +26,9 @@ const contextDefault: {
     return;
   },
   setMyGuestStream: (_: MediaStream | null) => {
+    return;
+  },
+  callDisconnected: () => {
     return;
   },
   setMyPeer: (_: SimplePeer.Instance | null) => {
@@ -38,7 +44,16 @@ export function SocketProvider(props: any) {
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [myPeer, setMyPeer] = useState<SimplePeer.Instance | null>(null);
   const [guestStream, setMyGuestStream] = useState<MediaStream | null>(null);
-  const { userIsCallingListener } = useCallHooks();
+
+  function resetStreams() {
+    setMyStream(null);
+    setMyGuestStream(null);
+  }
+
+  const { userIsCallingListener, emitEndCall } = useCallHooks();
+  const onCallWith = useSelector(
+    (state: StoreState) => state.callStore.onCallWith
+  );
 
   function currentUserListener() {
     if (socket.current) {
@@ -56,13 +71,30 @@ export function SocketProvider(props: any) {
     }
   }
 
+  function callEndedListener() {
+    if (socket.current) {
+      socket.current.on(SocketConst.callDisconnected, () => {
+        callDisconnected();
+      });
+    }
+  }
+  function callDisconnected() {
+    console.log(myPeer);
+
+    myPeer?.destroy();
+    dispatch(resetCallStore());
+    resetStreams();
+  }
+
   useEffect(() => {
     socket.current = io("http://localhost:3001");
     currentUserListener();
     clientsListListener();
     userIsCallingListener(socket.current);
+    callEndedListener();
     return () => {
       if (socket.current) {
+        emitEndCall(onCallWith);
         socket.current.disconnect();
       }
     };
@@ -75,6 +107,7 @@ export function SocketProvider(props: any) {
     myStream: myStream,
     setMyPeer,
     setMyStream,
+    callDisconnected,
     setMyGuestStream,
   };
   return (

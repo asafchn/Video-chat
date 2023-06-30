@@ -18,7 +18,7 @@ export default function VideoCall({
   users: Users;
 }) {
   const socket = useContext(SocketContext);
-  const { replaceStreamForPeer } = useCallHooks();
+  const { replaceStreamForPeer, emitEndCall } = useCallHooks();
   const onCallWith = useSelector(
     (state: StoreState) => state.callStore.onCallWith
   );
@@ -29,9 +29,16 @@ export default function VideoCall({
 
   function getGuestName() {
     if (caller?.callerId) {
-      return users[caller.callerId].name;
+      if (users[caller.callerId]) {
+        return users[caller.callerId].name;
+      }
     }
     return null;
+  }
+
+  function endCall() {
+    socket.callDisconnected();
+    emitEndCall(onCallWith);
   }
 
   function shareScreen() {
@@ -75,6 +82,7 @@ export default function VideoCall({
         <CallControls
           shareScreen={shareScreen}
           showCamera={showCamera}
+          endCall={endCall}
           stopStreaming={stopStreaming}
         ></CallControls>
       ) : null}

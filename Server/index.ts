@@ -31,6 +31,11 @@ io.on(SocketConst.connection, (socket) => {
     deleteUser(socket);
     emitClientsList(io);
   });
+
+  socket.on(SocketConst.callDisconnected, (data: { id: string }) => {
+    io.to(data.id).emit(SocketConst.callDisconnected);
+  });
+
   socket.on(
     SocketConst.userCalled,
     (data: { from: string; name: string; signal: any; to: string }) => {

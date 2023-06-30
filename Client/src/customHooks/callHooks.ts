@@ -4,6 +4,7 @@ import Peer from "simple-peer";
 import { useCallerHooks } from "./callerHooks";
 import { useCalleeHooks } from "./calleeHooks";
 import SimplePeer from "simple-peer";
+import { SocketConst } from "../../../consts";
 
 export function useCallHooks() {
   const callerHooks = useCallerHooks();
@@ -89,11 +90,20 @@ export function useCallHooks() {
     return mediaStream;
   }
 
+  function emitEndCall(id: string) {
+    if (socket.webSocket) {
+      socket.webSocket!.emit(SocketConst.callDisconnected, {
+        id,
+      });
+    }
+  }
+
   return {
     acceptCall,
     userIsCallingListener: calleeHooks.userIsCallingListener,
     replaceStreamForPeer,
     getMediaOnInitialConnection,
+    emitEndCall,
     callUser,
     createEmptyStream,
   };

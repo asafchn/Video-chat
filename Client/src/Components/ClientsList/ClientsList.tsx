@@ -7,6 +7,9 @@ import { User } from "../../../../consts";
 
 export default function ClientsList() {
   const users = useSelector((state: StoreState) => state.userStore.users);
+  const onCallWith = useSelector(
+    (state: StoreState) => state.callStore.onCallWith
+  );
   const userId = useSelector(
     (state: StoreState) => state.userStore.userId,
     shallowEqual
@@ -28,20 +31,23 @@ export default function ClientsList() {
     async function handleCallUser(userId: string) {
       callUser(userId);
     }
-
-    return Object.values(users).map((user) => {
-      if (shouldRenderClientItem(user)) {
-        return (
-          <ClientItem
-            key={user.id}
-            user={user}
-            onClick={(id: string) => handleCallUser(id)}
-          ></ClientItem>
-        );
-      } else {
-        return null;
-      }
-    });
+    if (onCallWith) {
+      return null;
+    } else {
+      return Object.values(users).map((user) => {
+        if (shouldRenderClientItem(user)) {
+          return (
+            <ClientItem
+              key={user.id}
+              user={user}
+              onClick={(id: string) => handleCallUser(id)}
+            ></ClientItem>
+          );
+        } else {
+          return null;
+        }
+      });
+    }
   }
 
   return <div className="clients-container">{RenderClientsList()}</div>;

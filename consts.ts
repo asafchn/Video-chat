@@ -7,6 +7,7 @@ export enum SocketConst {
   me = "me",
   callAccepted = "callAccepted",
   streamChanged = "streamChanged",
+  callDisconnected = "callDisconnected",
 }
 
 export interface User {
@@ -29,10 +30,11 @@ export interface UserCalledData {
   name: string;
 }
 
-export type CallControlFunc = () => void;
+export type CallControlFunc = (props?: any) => void;
 
 export interface CallControlFunctions {
   shareScreen: CallControlFunc;
   showCamera: CallControlFunc;
   stopStreaming: CallControlFunc;
+  endCall: CallControlFunc;
 }

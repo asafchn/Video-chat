@@ -38,12 +38,7 @@ export default function AddUser() {
   return (
     <Modal>
       <Input ref={inputRef}></Input>
-      <Button
-        text="All is set"
-        secondary={false}
-        onClick={createUser}
-        disabled={false}
-      ></Button>
+      <Button text="All is set" onClick={createUser} disabled={false}></Button>
     </Modal>
   );
 }
