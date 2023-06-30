@@ -4,10 +4,11 @@ import { SocketContext } from "../../../socket/SocketContext";
 import { StoreState } from "../../../stores/store";
 import { useCallHooks } from "../../../customHooks/callHooks";
 import Modal from "../../atoms/modal/Modal";
-import Button from "../../atoms/button/Button";
+import Button, { ButtonColors } from "../../atoms/button/Button";
+import "./call-accept-modal.css";
 
 export default function CallAcceptModal() {
-  const { acceptCall } = useCallHooks();
+  const { acceptCall, declineCall } = useCallHooks();
   const socket = useContext(SocketContext);
   const caller = useSelector((state: StoreState) => state.callStore.caller);
   const receivingCall = useSelector(
@@ -19,9 +20,15 @@ export default function CallAcceptModal() {
 
   const webSocket = socket.webSocket ?? null;
 
-  async function handleAcceptCall() {
+  function handleAcceptCall() {
     if (webSocket) {
       acceptCall();
+    }
+  }
+
+  function handleDecline() {
+    if (caller) {
+      declineCall(caller.callerId);
     }
   }
 
@@ -37,12 +44,18 @@ export default function CallAcceptModal() {
   if (shouldShowModal()) {
     return (
       <Modal>
-        <div>{caller!.callerName} is calling</div>
-        <div>
+        <div className="caller-name">{caller!.callerName} is calling</div>
+        <div className="call-modal-actions">
           <Button
             disabled={false}
             text={"Answer"}
             onClick={handleAcceptCall}
+          ></Button>
+          <Button
+            disabled={false}
+            text="Decline"
+            onClick={handleDecline}
+            color={ButtonColors.red}
           ></Button>
         </div>
       </Modal>

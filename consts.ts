@@ -8,6 +8,7 @@ export enum SocketConst {
   callAccepted = "callAccepted",
   streamChanged = "streamChanged",
   callDisconnected = "callDisconnected",
+  callDeclined = "callDeclined",
 }
 
 export interface User {

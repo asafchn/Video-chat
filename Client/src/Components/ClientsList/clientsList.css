@@ -1,5 +1,5 @@
 .clients-container {
-  background-color: var(--background-over);
+  background-color: var(--color-clients);
   width: 20%;
   padding: 8px;
   height: calc(100vh - 16px);

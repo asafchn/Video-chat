@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { StoreState } from "../../stores/store";
 import VideoCall from "../VideoCall/VideoCall/VideoCall";
 import CallAcceptModal from "./CallAcceptModal/CallAcceptModal";
-
+import "./MainPageAuthed.css";
 export default function MainPageAuthed() {
   const caller = useSelector((state: StoreState) => state.callStore.caller);
   const userName = useSelector((state: StoreState) => state.userStore.userName);
@@ -20,13 +20,15 @@ export default function MainPageAuthed() {
 
   return (
     <>
-      <CallAcceptModal></CallAcceptModal>
       <div className={mainContainerClassName()}>
-        <VideoCall
-          caller={caller}
-          userName={userName}
-          users={users}
-        ></VideoCall>
+        <div className="call-container">
+          <CallAcceptModal></CallAcceptModal>
+          <VideoCall
+            caller={caller}
+            userName={userName}
+            users={users}
+          ></VideoCall>
+        </div>
         <ClientsList></ClientsList>
       </div>
     </>

@@ -36,6 +36,10 @@ io.on(SocketConst.connection, (socket) => {
     io.to(data.id).emit(SocketConst.callDisconnected);
   });
 
+  socket.on(SocketConst.callDeclined, (data: { id: string }) => {
+    io.to(data.id).emit(SocketConst.callDeclined);
+  });
+
   socket.on(
     SocketConst.userCalled,
     (data: { from: string; name: string; signal: any; to: string }) => {

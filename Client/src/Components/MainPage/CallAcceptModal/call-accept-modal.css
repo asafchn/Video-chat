@@ -1,0 +1,7 @@
+.call-modal-actions .button {
+  margin: 8px;
+}
+
+.caller-name {
+  color: var(--text);
+}

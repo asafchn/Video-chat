@@ -71,6 +71,14 @@ export function SocketProvider(props: any) {
     }
   }
 
+  function callDeclinedListener(socket: Socket) {
+    socket.on(SocketConst.callDeclined, () => {
+      console.log("call declined");
+
+      callDisconnected();
+    });
+  }
+
   function callEndedListener() {
     if (socket.current) {
       socket.current.on(SocketConst.callDisconnected, () => {
@@ -79,9 +87,10 @@ export function SocketProvider(props: any) {
     }
   }
   function callDisconnected() {
-    console.log(myPeer);
+    if (myPeer) {
+      myPeer.destroy();
+    }
 
-    myPeer?.destroy();
     dispatch(resetCallStore());
     resetStreams();
   }
@@ -90,6 +99,7 @@ export function SocketProvider(props: any) {
     socket.current = io("http://localhost:3001");
     currentUserListener();
     clientsListListener();
+    callDeclinedListener(socket.current);
     userIsCallingListener(socket.current);
     callEndedListener();
     return () => {
@@ -104,6 +114,7 @@ export function SocketProvider(props: any) {
     webSocket: socket.current,
     connection: myPeer,
     guestStream: guestStream,
+    resetStreams,
     myStream: myStream,
     setMyPeer,
     setMyStream,

@@ -81,6 +81,15 @@ export function useCallHooks() {
     calleeHooks.updateCalleeStates(peer);
   }
 
+  function emitCallDeclined(id: string) {
+    socket.webSocket?.emit(SocketConst.callDeclined, { id });
+  }
+
+  function declineCall(id: string) {
+    emitCallDeclined(id);
+    socket.callDisconnected();
+  }
+
   async function getMediaOnInitialConnection() {
     const mediaStream = await navigator.mediaDevices.getUserMedia({
       video: false,
@@ -100,6 +109,7 @@ export function useCallHooks() {
 
   return {
     acceptCall,
+    declineCall,
     userIsCallingListener: calleeHooks.userIsCallingListener,
     replaceStreamForPeer,
     getMediaOnInitialConnection,
