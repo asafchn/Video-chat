@@ -39,5 +39,5 @@
 }
 
 .color-red:hover {
-  background-color: #ff2400;
+  background-color: var(--bright-red);
 }
