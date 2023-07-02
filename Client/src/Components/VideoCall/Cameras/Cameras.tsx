@@ -14,7 +14,7 @@ export default function Cameras({
     if (user.stream) {
       return <CameraView stream={user.stream}></CameraView>;
     } else if (user.name) {
-      return <div className="placeholder">{user.name}</div>;
+      return <div className="placeholder video">{user.name}</div>;
     }
     return null;
   }

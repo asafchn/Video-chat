@@ -4,10 +4,9 @@
 }
 
 .placeholder {
-  width: 632px;
-  height: 460px;
   display: flex;
   border: solid 1px var(--background-over);
+  height: calc(100% - 32px);
   border-radius: 8px;
   justify-content: center;
   align-items: center;

@@ -1,16 +1,15 @@
 .actions {
   display: flex;
-  justify-content: center;
-}
-
-.actions .button {
-  margin: 8px;
+  width: 100%;
+  justify-content: space-evenly;
+  margin-bottom: 8px;
 }
 
 .call-controls-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 334px;
 }
 
 .end-call {
