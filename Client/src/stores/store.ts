@@ -1,10 +1,9 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import userStore from "./userStore";
-import streamStore from "./streamStore";
 import callStore from "./callStore";
 
-const combinedReducers = combineReducers({ userStore, callStore, streamStore });
+const combinedReducers = combineReducers({ userStore, callStore });
 
 export const store = configureStore({ reducer: combinedReducers });
 
