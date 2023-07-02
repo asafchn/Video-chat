@@ -60,7 +60,7 @@ export function useCallHooks() {
     }
   }
 
-  function createEmptyStream(width = 3840, height = 2160) {
+  function createEmptyStream(width = 1920, height = 1080) {
     let canvas = Object.assign(document.createElement("canvas"), {
       width,
       height,

@@ -33,9 +33,15 @@ export interface UserCalledData {
 
 export type CallControlFunc = (props?: any) => void;
 
-export interface CallControlFunctions {
+export interface CallControlProps {
   shareScreen: CallControlFunc;
   showCamera: CallControlFunc;
   stopStreaming: CallControlFunc;
   endCall: CallControlFunc;
+  currentlyStreaming: videoStreamType | null;
+}
+
+export enum videoStreamType {
+  camera = "camera",
+  screenShare = "screenShare",
 }

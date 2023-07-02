@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import Cameras from "../Cameras/Cameras";
 import CallControls from "../Controls/CallControls";
 import "./video-call.css";
 import { SocketContext } from "../../../socket/SocketContext";
 import { useCallHooks } from "../../../customHooks/callHooks";
-import { Caller, Users } from "../../../../../consts";
+import { Caller, Users, videoStreamType } from "../../../../../consts";
 import { StoreState } from "../../../stores/store";
 import { useSelector } from "react-redux";
 
@@ -22,6 +22,8 @@ export default function VideoCall({
   const onCallWith = useSelector(
     (state: StoreState) => state.callStore.onCallWith
   );
+
+  const streamTypeRef = useRef<videoStreamType | null>(null);
   const myStream = socket.myStream;
   const guestStream = socket.guestStream;
   const user = { stream: myStream, name: userName };
@@ -46,6 +48,7 @@ export default function VideoCall({
     navigator.mediaDevices
       .getDisplayMedia({ video: true, audio: true })
       .then((mediaStream) => {
+        streamTypeRef.current = videoStreamType.screenShare;
         socket.setMyStream(mediaStream);
         replaceStreamForPeer(mediaStream);
       });
@@ -56,12 +59,16 @@ export default function VideoCall({
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((mediaStream) => {
+        streamTypeRef.current = videoStreamType.camera;
+
         socket.setMyStream(mediaStream);
         replaceStreamForPeer(mediaStream);
       });
   }
 
   function stopStreaming() {
+    streamTypeRef.current = null;
+
     resetTracks();
     socket.setMyStream(null);
   }
@@ -80,6 +87,7 @@ export default function VideoCall({
       <Cameras user={user} guest={guest} onCallWith={onCallWith}></Cameras>
       {onCallWith ? (
         <CallControls
+          currentlyStreaming={streamTypeRef.current}
           shareScreen={shareScreen}
           showCamera={showCamera}
           endCall={endCall}

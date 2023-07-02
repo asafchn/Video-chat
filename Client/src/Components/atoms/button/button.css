@@ -8,6 +8,11 @@
   height: 50px;
 }
 
+.button svg {
+  width: 20px;
+  height: 20px;
+}
+
 .color-default {
   color: var(--text);
   background-color: var(--blue-button);
@@ -24,8 +29,13 @@
 }
 
 .type-extended {
-  width: 634px;
-  height: 35px;
+  width: 334px;
+  height: 45px;
+}
+
+.type-small {
+  width: 100px;
+  height: 50px;
 }
 
 .button.disabled {

@@ -1,5 +1,5 @@
 import "./button.css";
-import { MouseEvent } from "react";
+import { MouseEvent, ReactNode } from "react";
 
 export enum ButtonColors {
   red = "red",
@@ -7,20 +7,22 @@ export enum ButtonColors {
 
 export enum ButtonType {
   extended = "extended",
+  small = "small",
 }
 
 export default function Button({
   onClick,
   disabled,
-  text,
   color,
   type,
+  children,
 }: {
   onClick: () => void;
   disabled: boolean;
-  text: string;
+  text?: string;
   color?: ButtonColors;
   type?: ButtonType;
+  children?: ReactNode;
 }) {
   function buttonColorClass() {
     if (color) {
@@ -50,7 +52,7 @@ export default function Button({
       className={`button ${isDisabled()} ${buttonTypeClass()} ${buttonColorClass()}`}
       onClick={(e) => handleClick(e)}
     >
-      {text}
+      {children ? children : null}
     </button>
   );
 }

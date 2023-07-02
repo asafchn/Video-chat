@@ -46,17 +46,16 @@ export default function CallAcceptModal() {
       <Modal>
         <div className="caller-name">{caller!.callerName} is calling</div>
         <div className="call-modal-actions">
+          <Button disabled={false} onClick={handleAcceptCall}>
+            Answer
+          </Button>
           <Button
             disabled={false}
-            text={"Answer"}
-            onClick={handleAcceptCall}
-          ></Button>
-          <Button
-            disabled={false}
-            text="Decline"
             onClick={handleDecline}
             color={ButtonColors.red}
-          ></Button>
+          >
+            Decline
+          </Button>
         </div>
       </Modal>
     );
