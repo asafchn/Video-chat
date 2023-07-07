@@ -5,10 +5,13 @@ import { useCallerHooks } from "./callerHooks";
 import { useCalleeHooks } from "./calleeHooks";
 import SimplePeer from "simple-peer";
 import { SocketConst } from "../../../consts";
+import { updateCallingUser } from "../stores/callStore";
+import { useDispatch } from "react-redux";
 
 export function useCallHooks() {
   const callerHooks = useCallerHooks();
   const calleeHooks = useCalleeHooks();
+  const dispatch = useDispatch();
   const socket = useContext(SocketContext);
   const peer = socket.connection;
 
@@ -27,6 +30,7 @@ export function useCallHooks() {
   }
 
   async function callUser(id: string) {
+    dispatch(updateCallingUser({ status: true, id }));
     const stream = await getMediaOnInitialConnection();
     if (socket.webSocket) {
       const peer = createPeer({ initiator: true, stream: stream });
@@ -68,7 +72,7 @@ export function useCallHooks() {
     canvas.getContext("2d")!.fillRect(0, 0, width, height);
     let stream = canvas.captureStream();
     return Object.assign(stream.getVideoTracks()[0], {
-      enabled: false,
+      enabled: true,
     });
   }
 

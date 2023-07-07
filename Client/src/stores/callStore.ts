@@ -6,10 +6,14 @@ interface InitialState {
   receivingCall: boolean;
   callAccepted: boolean | null;
   onCallWith: string;
+  callDeclined: boolean;
+  callingUser: { status: boolean; id: string };
 }
 
 const initialState: InitialState = {
   receivingCall: false,
+  callDeclined: false,
+  callingUser: { status: false, id: "" },
   caller: null,
   callAccepted: null,
   onCallWith: "",
@@ -33,14 +37,29 @@ export const callSlice = createSlice({
       action: PayloadAction<{ callAccepted: boolean }>
     ) {
       state.callAccepted = action.payload.callAccepted;
+      state.callingUser = { status: false, id: "" };
     },
     updateOnCallWith(state, action: PayloadAction<{ userId: string }>) {
       state.onCallWith = action.payload.userId;
+    },
+    updateCallDeclined(state, action: PayloadAction<{ status: boolean }>) {
+      state.callDeclined = action.payload.status;
+      state.callingUser = { status: false, id: "" };
+    },
+    updateCallingUser(
+      state,
+      action: PayloadAction<{ status: boolean; id: string }>
+    ) {
+      state.callingUser = {
+        status: action.payload.status,
+        id: action.payload.id,
+      };
     },
     resetState(state) {
       state.callAccepted = null;
       state.caller = null;
       state.onCallWith = "";
+      state.callingUser = { status: false, id: "" };
       state.receivingCall = false;
     },
   },
@@ -54,4 +73,6 @@ export const {
   updateCallAccepted,
   resetState,
   updateOnCallWith,
+  updateCallDeclined,
+  updateCallingUser,
 } = callSlice.actions;

@@ -4,20 +4,14 @@ import CallControls from "../Controls/CallControls";
 import "./video-call.css";
 import { SocketContext } from "../../../socket/SocketContext";
 import { useCallHooks } from "../../../customHooks/callHooks";
-import { Caller, Users, videoStreamType } from "../../../../../consts";
+import { videoStreamType } from "../../../../../consts";
 import { StoreState } from "../../../stores/store";
 import { useSelector } from "react-redux";
+import { useCallUtils } from "../../../customHooks/callUtils";
 
-export default function VideoCall({
-  caller,
-  userName,
-  users,
-}: {
-  caller: Caller | null;
-  userName: string | null;
-  users: Users;
-}) {
+export default function VideoCall({ userName }: { userName: string | null }) {
   const socket = useContext(SocketContext);
+  const callUtils = useCallUtils();
   const { replaceStreamForPeer, emitEndCall } = useCallHooks();
   const onCallWith = useSelector(
     (state: StoreState) => state.callStore.onCallWith
@@ -27,16 +21,7 @@ export default function VideoCall({
   const myStream = socket.myStream;
   const guestStream = socket.guestStream;
   const user = { stream: myStream, name: userName };
-  const guest = { stream: guestStream, name: getGuestName() };
-
-  function getGuestName() {
-    if (caller?.callerId) {
-      if (users[caller.callerId]) {
-        return users[caller.callerId].name;
-      }
-    }
-    return null;
-  }
+  const guest = { stream: guestStream, name: callUtils.getGuestName() };
 
   function endCall() {
     socket.callDisconnected();

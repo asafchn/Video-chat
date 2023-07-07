@@ -3,7 +3,10 @@ import { io, type Socket } from "socket.io-client";
 import { SocketConst, Users } from "../../../consts";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUserId, updateClientsList } from "../stores/userStore";
-import { resetState as resetCallStore } from "../stores/callStore";
+import {
+  resetState as resetCallStore,
+  updateCallDeclined,
+} from "../stores/callStore";
 import { useCallHooks } from "../customHooks/callHooks";
 import SimplePeer from "simple-peer";
 import { StoreState } from "../stores/store";
@@ -49,6 +52,12 @@ export function SocketProvider(props: any) {
     setMyStream(null);
     setMyGuestStream(null);
   }
+  function onCallDeclined() {
+    dispatch(updateCallDeclined({ status: true }));
+    setTimeout(() => {
+      dispatch(updateCallDeclined({ status: false }));
+    }, 1500);
+  }
 
   const { userIsCallingListener, emitEndCall } = useCallHooks();
   const onCallWith = useSelector(
@@ -73,8 +82,7 @@ export function SocketProvider(props: any) {
 
   function callDeclinedListener(socket: Socket) {
     socket.on(SocketConst.callDeclined, () => {
-      console.log("call declined");
-
+      onCallDeclined();
       callDisconnected();
     });
   }

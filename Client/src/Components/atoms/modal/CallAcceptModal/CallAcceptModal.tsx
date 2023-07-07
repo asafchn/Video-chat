@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { useSelector } from "react-redux";
-import { SocketContext } from "../../../socket/SocketContext";
-import { StoreState } from "../../../stores/store";
-import { useCallHooks } from "../../../customHooks/callHooks";
-import Modal from "../../atoms/modal/Modal";
-import Button, { ButtonColors } from "../../atoms/button/Button";
+import { SocketContext } from "../../../../socket/SocketContext";
+import { StoreState } from "../../../../stores/store";
+import { useCallHooks } from "../../../../customHooks/callHooks";
+import Modal from "../Modal";
+import Button, { ButtonColors } from "../../button/Button";
 import "./call-accept-modal.css";
 
 export default function CallAcceptModal() {
