@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import Cameras from "../Cameras/Cameras";
 import CallControls from "../Controls/CallControls";
 import "./video-call.css";
@@ -8,9 +8,12 @@ import { videoStreamType } from "../../../../../consts";
 import { StoreState } from "../../../stores/store";
 import { useSelector } from "react-redux";
 import { useCallUtils } from "../../../customHooks/callUtils";
+import AudioSettingsModal from "../../AudioSettings/AudioSettingModal";
+import Button from "../../atoms/button/Button";
 
 export default function VideoCall({ userName }: { userName: string | null }) {
   const socket = useContext(SocketContext);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const callUtils = useCallUtils();
   const { replaceStreamForPeer, emitEndCall } = useCallHooks();
   const onCallWith = useSelector(
@@ -58,6 +61,12 @@ export default function VideoCall({ userName }: { userName: string | null }) {
     socket.setMyStream(null);
   }
 
+  function handleSettingsClick() {
+    setShowSettingsModal(true);
+  }
+  function closeModal() {
+    setShowSettingsModal(false);
+  }
   function resetTracks() {
     if (myStream) {
       const allTracks = myStream.getTracks();
@@ -78,6 +87,15 @@ export default function VideoCall({ userName }: { userName: string | null }) {
           endCall={endCall}
           stopStreaming={stopStreaming}
         ></CallControls>
+      ) : null}
+      {myStream ? (
+        <Button onClick={handleSettingsClick} disabled={false}>
+          {" "}
+          settings
+        </Button>
+      ) : null}
+      {showSettingsModal ? (
+        <AudioSettingsModal close={closeModal}></AudioSettingsModal>
       ) : null}
     </div>
   );
